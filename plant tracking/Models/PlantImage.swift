@@ -1,5 +1,5 @@
 //
-//  Note.swift
+//  PlantImage.swift
 //  plant tracking
 //
 //  Created by Oscar Gomez on 15/7/25.
@@ -8,14 +8,16 @@
 import Foundation
 import SwiftData
 
-final class Note {
+final class PlantImage {
     var id: UUID
-    var text: String
+    var plantId: UUID
     var date: Date
+    var image: Data
     
-    init(text: String) {
+    init(plantId: UUID, image: Data) {
         self.id = UUID()
-        self.text = text
+        self.plantId = plantId
         self.date = Date()
+        self.image = image
     }
 }
