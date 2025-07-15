@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 
+@Model
 final class PlantImage {
     var id: UUID
     var plantId: UUID
