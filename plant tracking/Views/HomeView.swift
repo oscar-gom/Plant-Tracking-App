@@ -8,6 +8,28 @@
 import Foundation
 import SwiftUI
 
-struct HomeView {
-    <#fields#>
+struct HomeView: View {
+    var body: some View {
+            VStack {
+                HStack {
+                    Text("Home Page")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding()
+                    Spacer()
+                    Button("New Plant", systemImage: "plus.circle") {
+                        // TODO
+                    }
+                    .padding()
+                }
+                Spacer()
+                ScrollView {
+                    // TODO
+                }
+            }
+    }
+}
+
+#Preview {
+    HomeView()
 }
