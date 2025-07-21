@@ -10,7 +10,6 @@ import SwiftData
 
 @Model
 final class Plant {
-    var id: UUID
     var name: String
     var species: String?
     var datePlanted: Date
@@ -19,7 +18,6 @@ final class Plant {
     var waterFrequency: String?
     
     init(name: String, species: String? = nil, datePlanted: Date, height: Double? = nil, location: String? = nil, waterFrequency: String? = nil) {
-        self.id = UUID()
         self.name = name
         self.species = species
         self.datePlanted = datePlanted

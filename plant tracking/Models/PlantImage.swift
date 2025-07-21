@@ -10,15 +10,16 @@ import SwiftData
 
 @Model
 final class PlantImage {
-    var id: UUID
-    var plantId: UUID
+    var plant: Plant
     var date: Date
     var image: Data
+    var descript: String?
     
-    init(plantId: UUID, image: Data) {
-        self.id = UUID()
-        self.plantId = plantId
-        self.date = Date()
+    init(plant: Plant, date: Date, image: Data, description: String? = nil) {
+        self.plant = plant
+        self.date = date
         self.image = image
+        self.descript = description
     }
+    
 }

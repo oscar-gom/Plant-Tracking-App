@@ -10,13 +10,13 @@ import SwiftData
 
 @Model
 final class Note {
-    var id: UUID
     var text: String
     var date: Date
+    var plant: Plant
     
-    init(text: String) {
-        self.id = UUID()
+    init(text: String, date: Date, plant: Plant) {
         self.text = text
-        self.date = Date()
+        self.date = date
+        self.plant = plant
     }
 }

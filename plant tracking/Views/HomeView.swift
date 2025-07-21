@@ -7,15 +7,20 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
+    @Environment(\.modelContext) private var context
+    
     @State private var showAddPlantSheet = false
+    
+    @Query private var plants: [Plant]
     
     var body: some View {
         NavigationView {
-            VStack {
-                ScrollView {
-                    // TODO: List of plant items
+            List {
+                ForEach(plants, id: \.self) { plant in
+                    Text(plant.name)
                 }
             }
             .navigationTitle("My Garden")
