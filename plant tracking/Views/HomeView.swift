@@ -12,7 +12,6 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Spacer()
                 ScrollView {
                     // TODO: List of plant items
                 }
