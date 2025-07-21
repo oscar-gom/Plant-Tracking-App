@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
+    @State private var showAddPlantSheet = false
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -16,12 +18,16 @@ struct HomeView: View {
                     // TODO: List of plant items
                 }
             }
-            .navigationTitle("Mi Jardín")
+            .navigationTitle("My Garden")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
                         Button("New Plant", systemImage: "plus.circle") {
-                            // TODO: Show create plant view
+                            showAddPlantSheet = true
+                        }
+                        .sheet(isPresented: $showAddPlantSheet) {
+                            PlantView()
+                                .presentationDetents([.height(600)])
                         }
                         Button("Settings", systemImage: "gearshape.fill") {
                             // TODO: Show settings
