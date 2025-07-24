@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-struct PlantView: View {
+struct CreatePlantView: View {
     @Environment(\.modelContext) private var context
     
     @State private var name: String = ""
@@ -79,5 +79,5 @@ struct PlantView: View {
 }
 
 #Preview {
-    PlantView()
+    CreatePlantView()
 }

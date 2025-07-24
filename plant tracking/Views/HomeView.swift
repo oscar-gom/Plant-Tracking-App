@@ -18,24 +18,26 @@ struct HomeView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(plants, id: \.self) { plant in
-                    Text(plant.name)
+            VStack {
+                List {
+                    ForEach(plants, id: \.self) { plant in
+                        Text(plant.name)
+                    }
                 }
-            }
-            .navigationTitle("My Garden")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack {
-                        Button("New Plant", systemImage: "plus.circle") {
-                            showAddPlantSheet = true
-                        }
-                        .sheet(isPresented: $showAddPlantSheet) {
-                            PlantView()
-                                .presentationDetents([.height(600)])
-                        }
-                        Button("Settings", systemImage: "gearshape.fill") {
-                            // TODO: Show settings
+                .navigationTitle("My Garden")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack {
+                            Button("New Plant", systemImage: "plus.circle") {
+                                showAddPlantSheet = true
+                            }
+                            .sheet(isPresented: $showAddPlantSheet) {
+                                CreatePlantView()
+                                    .presentationDetents([.height(600)])
+                            }
+                            Button("Settings", systemImage: "gearshape.fill") {
+                                // TODO: Show settings
+                            }
                         }
                     }
                 }
