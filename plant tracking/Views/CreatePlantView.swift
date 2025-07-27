@@ -21,23 +21,26 @@ struct CreatePlantView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                ScrollView {
-                    TextField("Name of plant*", text: $name)
-                        .padding()
+            Form {
+                    Section {
+                        TextField("Name of plant*", text: $name)
+                            .padding()
+                        DatePicker("Planted Date*", selection: $plantedDate, displayedComponents: .date)
+                            .padding()
+                    }
+                Section {
                     TextField("Species", text: $species)
-                        .padding(.horizontal)
-                    DatePicker("Planted Date*", selection: $plantedDate, displayedComponents: .date)
                         .padding()
+                    
                     TextField("Height", text: $height)
-                        .padding(.horizontal)
+                        .padding()
                         .keyboardType(.decimalPad)
                     TextField("Location", text: $location)
                         .padding()
                     TextField("Water Frequency", text: $waterFrequency)
-                        .padding(.horizontal)
+                        .padding()
                 }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                
             }
             .navigationTitle("New Plant")
             .toolbar{
