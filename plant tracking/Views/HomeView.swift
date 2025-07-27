@@ -21,7 +21,9 @@ struct HomeView: View {
             VStack {
                 List {
                     ForEach(plants, id: \.self) { plant in
-                        Text(plant.name)
+                        NavigationLink(destination: PlantView(plant: plant)) {
+                                Text(plant.name)
+                            }
                     }
                 }
                 .navigationTitle("My Garden")
