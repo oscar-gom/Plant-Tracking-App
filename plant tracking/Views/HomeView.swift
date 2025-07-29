@@ -34,8 +34,10 @@ struct HomeView: View {
                                 showAddPlantSheet = true
                             }
                             .sheet(isPresented: $showAddPlantSheet) {
-                                CreatePlantView()
-                                    .presentationDetents([.height(600)])
+                                NavigationStack {
+                                    CreatePlantView()
+                                        .presentationDetents([.height(600)])
+                                }
                             }
                             Button("Settings", systemImage: "gearshape.fill") {
                                 // TODO: Show settings

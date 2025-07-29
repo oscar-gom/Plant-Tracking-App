@@ -42,86 +42,83 @@ struct PlantView: View {
     }
 
     var body: some View {
-        NavigationView {
-            Form {
-                VStack(alignment: .leading, spacing: 8) {
-                    TextField("Name*", text: $name)
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.vertical, 4)
-                }
-                //TODO: Photo Area
+        Form {
+            VStack(alignment: .leading, spacing: 8) {
+                TextField("Name*", text: $name)
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.vertical, 4)
+            }
+            //TODO: Photo Area
 
-                TextField("Species", text: $species)
-                    .padding()
-                DatePicker(
-                    "Planted Date*",
-                    selection: $datePlanted,
-                    displayedComponents: .date
-                )
+            TextField("Species", text: $species)
                 .padding()
-                TextField("Location", text: $location)
-                    .padding()
-                TextField("Height (m)", value: $height, format: .number)
-                    .keyboardType(.decimalPad)
-                    .padding()
-                TextField("Water Frequency", text: $waterFrequency)
-                    .padding()
-                Section {
-                    NavigationLink(destination: PlantNotesView(plant: plant)) {
-                        HStack {
-                            Text("Notes")
-                            Spacer()
-                            Label("View", systemImage: "magnifyingglass")
-                                .foregroundColor(Color.black)
-                        }
+            DatePicker(
+                "Planted Date*",
+                selection: $datePlanted,
+                displayedComponents: .date
+            )
+            .padding()
+            TextField("Location", text: $location)
+                .padding()
+            TextField("Height (m)", value: $height, format: .number)
+                .keyboardType(.decimalPad)
+                .padding()
+            TextField("Water Frequency", text: $waterFrequency)
+                .padding()
+            Section {
+                NavigationLink(destination: PlantNotesView(plant: plant)) {
+                    HStack {
+                        Text("Notes")
+                        Spacer()
+                        Label("View", systemImage: "magnifyingglass")
                     }
                 }
-
-                //TODO: Notes area
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Save", systemImage: "pencil") {
-                        plant.name = name
-                        plant.species = species.isEmpty ? nil : species
-                        plant.datePlanted = datePlanted
-                        plant.location = location.isEmpty ? nil : location
-                        plant.height = height
-                        plant.waterFrequency =
-                            waterFrequency.isEmpty ? nil : waterFrequency
 
+            //TODO: Notes area
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button("Save", systemImage: "pencil") {
+                    plant.name = name
+                    plant.species = species.isEmpty ? nil : species
+                    plant.datePlanted = datePlanted
+                    plant.location = location.isEmpty ? nil : location
+                    plant.height = height
+                    plant.waterFrequency =
+                        waterFrequency.isEmpty ? nil : waterFrequency
+
+                    do {
+                        try context.save()
+                    } catch {
+                        print("error saving context: \(error)")
+                    }
+                }
+                .disabled(!hasChanges)
+            }
+            ToolbarItem(placement: .status) {
+                Button(action: {
+                    showDeleteConfirmation = true
+                }) {
+                    Label("Delete Plant", systemImage: "trash")
+                        .foregroundColor(.red)
+                }
+                .alert(
+                    "Are you sure you want to delete this plant?",
+                    isPresented: $showDeleteConfirmation
+                ) {
+                    Button("Delete", role: .destructive) {
+                        context.delete(plant)
                         do {
                             try context.save()
+                            dismiss()
                         } catch {
-                            print("error saving context: \(error)")
+                            print("error deleting plant: \(error)")
                         }
                     }
-                    .disabled(!hasChanges)
-                }
-                ToolbarItem(placement: .status) {
-                    Button(action: {
-                        showDeleteConfirmation = true
-                    }) {
-                        Label("Delete Plant", systemImage: "trash")
-                            .foregroundColor(.red)
-                    }
-                    .alert(
-                        "Are you sure you want to delete this plant?",
-                        isPresented: $showDeleteConfirmation
-                    ) {
-                        Button("Delete", role: .destructive) {
-                            context.delete(plant)
-                            do {
-                                try context.save()
-                                dismiss()
-                            } catch {
-                                print("error deleting plant: \(error)")
-                            }
-                        }
-                        Button("Cancel", role: .cancel) {}
-                    }
+                    Button("Cancel", role: .cancel) {}
                 }
             }
         }
