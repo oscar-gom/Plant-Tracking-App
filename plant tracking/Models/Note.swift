@@ -14,9 +14,9 @@ final class Note {
     var date: Date
     var plant: Plant
     
-    init(text: String, date: Date, plant: Plant) {
+    init(text: String, plant: Plant) {
         self.text = text
-        self.date = date
+        self.date = Date()
         self.plant = plant
     }
 }

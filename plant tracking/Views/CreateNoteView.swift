@@ -9,7 +9,15 @@ import Foundation
 import SwiftUI
 
 struct CreateNoteView: View {
+    @Environment(\.modelContext) private var context
+    
+    let plant: Plant
+    
     @State private var noteText: String = ""
+    
+    init(plant: Plant) {
+        self.plant = plant
+    }
     
     var body: some View {
         NavigationView {
@@ -23,7 +31,15 @@ struct CreateNoteView: View {
             .toolbar{
                 ToolbarItem(placement: .automatic) {
                     Button("Create", systemImage: "plus.circle"){
-                        //TODO: Create to database
+                        let note = Note(text: noteText, plant: plant)
+                        
+                        do {
+                            context.insert(note)
+                            try context.save()
+                        } catch {
+                            print("Error saving context: \(error)")
+                        }
+                        
                     }
                 }
             }
@@ -32,5 +48,5 @@ struct CreateNoteView: View {
 }
 
 #Preview {
-    CreateNoteView()
+    CreateNoteView(plant: Plant(name: "Prueba", datePlanted: Date()))
 }

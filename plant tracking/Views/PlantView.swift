@@ -5,16 +5,16 @@
 //  Created by Oscar Gomez on 24/7/25.
 //
 
-import SwiftUI
 import Foundation
 import SwiftData
+import SwiftUI
 
 struct PlantView: View {
     let plant: Plant
-    
+
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var name: String
     @State private var species: String
     @State private var height: Double
@@ -22,16 +22,15 @@ struct PlantView: View {
     @State private var location: String
     @State private var waterFrequency: String
     @State private var showDeleteConfirmation = false
-    
+
     private var hasChanges: Bool {
-        name != plant.name ||
-        species != (plant.species ?? "") ||
-        datePlanted != plant.datePlanted ||
-        location != (plant.location ?? "") ||
-        height != (plant.height ?? 0) ||
-        waterFrequency != (plant.waterFrequency ?? "")
+        name != plant.name || species != (plant.species ?? "")
+            || datePlanted != plant.datePlanted
+            || location != (plant.location ?? "")
+            || height != (plant.height ?? 0)
+            || waterFrequency != (plant.waterFrequency ?? "")
     }
-    
+
     init(plant: Plant) {
         self.plant = plant
         _name = State(initialValue: plant.name)
@@ -41,7 +40,7 @@ struct PlantView: View {
         _height = State(initialValue: plant.height ?? 0)
         _waterFrequency = State(initialValue: plant.waterFrequency ?? "")
     }
-    
+
     var body: some View {
         NavigationView {
             Form {
@@ -52,11 +51,15 @@ struct PlantView: View {
                         .padding(.vertical, 4)
                 }
                 //TODO: Photo Area
-                
+
                 TextField("Species", text: $species)
                     .padding()
-                DatePicker("Planted Date*", selection: $datePlanted, displayedComponents: .date)
-                    .padding()
+                DatePicker(
+                    "Planted Date*",
+                    selection: $datePlanted,
+                    displayedComponents: .date
+                )
+                .padding()
                 TextField("Location", text: $location)
                     .padding()
                 TextField("Height (m)", value: $height, format: .number)
@@ -64,11 +67,21 @@ struct PlantView: View {
                     .padding()
                 TextField("Water Frequency", text: $waterFrequency)
                     .padding()
-                
+                Section {
+                    NavigationLink(destination: PlantNotesView(plant: plant)) {
+                        HStack {
+                            Text("Notes")
+                            Spacer()
+                            Label("View", systemImage: "magnifyingglass")
+                                .foregroundColor(Color.black)
+                        }
+                    }
+                }
+
                 //TODO: Notes area
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar{
+            .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button("Save", systemImage: "pencil") {
                         plant.name = name
@@ -76,7 +89,8 @@ struct PlantView: View {
                         plant.datePlanted = datePlanted
                         plant.location = location.isEmpty ? nil : location
                         plant.height = height
-                        plant.waterFrequency = waterFrequency.isEmpty ? nil : waterFrequency
+                        plant.waterFrequency =
+                            waterFrequency.isEmpty ? nil : waterFrequency
 
                         do {
                             try context.save()
@@ -93,7 +107,10 @@ struct PlantView: View {
                         Label("Delete Plant", systemImage: "trash")
                             .foregroundColor(.red)
                     }
-                    .alert("Are you sure you want to delete this plant?", isPresented: $showDeleteConfirmation) {
+                    .alert(
+                        "Are you sure you want to delete this plant?",
+                        isPresented: $showDeleteConfirmation
+                    ) {
                         Button("Delete", role: .destructive) {
                             context.delete(plant)
                             do {
@@ -103,7 +120,7 @@ struct PlantView: View {
                                 print("error deleting plant: \(error)")
                             }
                         }
-                        Button("Cancel", role: .cancel) { }
+                        Button("Cancel", role: .cancel) {}
                     }
                 }
             }
