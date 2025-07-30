@@ -10,9 +10,22 @@
 		55ECD8862E269F9E0008EAE2 /* plant tracking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "plant tracking.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		552A45302E3A8B910034ED3A /* Exceptions for "plant tracking" folder in "plant tracking" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"plant-tracking-Info.plist",
+			);
+			target = 55ECD8852E269F9E0008EAE2 /* plant tracking */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		55ECD8882E269F9E0008EAE2 /* plant tracking */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				552A45302E3A8B910034ED3A /* Exceptions for "plant tracking" folder in "plant tracking" target */,
+			);
 			path = "plant tracking";
 			sourceTree = "<group>";
 		};
@@ -253,6 +266,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "plant-tracking-Info.plist";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access the plant images you have";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -280,6 +295,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "plant-tracking-Info.plist";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access the plant images you have";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

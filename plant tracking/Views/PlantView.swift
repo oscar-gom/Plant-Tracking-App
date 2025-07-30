@@ -75,6 +75,15 @@ struct PlantView: View {
                     }
                 }
             }
+            Section {
+                NavigationLink(destination: ImagesView(plant: plant)) {
+                    HStack {
+                        Text("Images")
+                        Spacer()
+                        Label("View", systemImage: "photo.artframe")
+                    }
+                }
+            }
 
             //TODO: Notes area
         }
