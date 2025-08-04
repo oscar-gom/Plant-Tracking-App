@@ -29,29 +29,31 @@ struct PlantImagesView: View {
         VStack {
             List {
                 ForEach(filteredImages) { image in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(image.date, style: .date)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
-                        
-                        if let uiImage = UIImage(data: image.image) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 200)
-                                .cornerRadius(8)
+                    NavigationLink(destination: PlantImageDetailsView(image: image)) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(image.date, style: .date)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                            
+                            if let uiImage = UIImage(data: image.image) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxHeight: 200)
+                                    .cornerRadius(8)
+                                    .padding(.horizontal)
+                            }
+                            
+                            Text(image.descript ?? "")
+                                .font(.body)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                                .foregroundColor(.primary)
                                 .padding(.horizontal)
                         }
-                        
-                        Text(image.descript ?? "")
-                            .font(.body)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                            .foregroundColor(.primary)
-                            .padding(.horizontal)
+                        .padding()
                     }
-                    .padding()
                 }
                 .onDelete { indexes in
                     for index in indexes {
