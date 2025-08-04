@@ -14,6 +14,7 @@ struct CreateNoteView: View {
     let plant: Plant
 
     @State private var noteText: String = ""
+    @State private var errorMessage: String? = nil
 
     init(plant: Plant) {
         self.plant = plant
@@ -26,24 +27,40 @@ struct CreateNoteView: View {
                     .frame(height: 300)
                     .border(Color.gray)
                     .padding()
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
             }
             .navigationTitle("Create new note")
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button("Create", systemImage: "plus.circle") {
-                        let note = Note(text: noteText, plant: plant)
-                        
-                        do {
-                            context.insert(note)
-                            try context.save()
-                        } catch {
-                            print("Error saving context: \(error)")
-                        }
-                        
+                        handleCreate()
                     }
-                    
                 }
             }
+        }
+    }
+    // Error control logic
+    private func validateFields() -> String? {
+        let trimmedText = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedText.isEmpty {
+            return "Note text is required."
+        }
+        return nil
+    }
+    private func handleCreate() {
+        errorMessage = validateFields()
+        guard errorMessage == nil else { return }
+        let note = Note(text: noteText, plant: plant)
+        do {
+            context.insert(note)
+            try context.save()
+            noteText = ""
+        } catch {
+            errorMessage = "Error saving note: \(error.localizedDescription)"
         }
     }
 }

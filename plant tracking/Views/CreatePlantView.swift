@@ -18,6 +18,7 @@ struct CreatePlantView: View {
     @State private var height: String = ""
     @State private var location: String = ""
     @State private var waterFrequency: String = ""
+    @State private var errorMessage: String? = nil
 
     var body: some View {
 
@@ -44,48 +45,57 @@ struct CreatePlantView: View {
                 TextField("Water Frequency", text: $waterFrequency)
                     .padding()
             }
+            if let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
 
         }
         .navigationTitle("New Plant")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Add", systemImage: "plus.circle") {
-                    //TODO: Make error control
-
-                    let plantHeight: Double
-                    if height.trimmingCharacters(in: .whitespaces).isEmpty {
-                        plantHeight = 0.0
-                    } else if let parsedHeight = Double(height) {
-                        plantHeight = (parsedHeight * 100).rounded() / 100
-                    } else {
-                        print("Not a number")
-                        return
-                    }
-
-                    let plant = Plant(
-                        name: name,
-                        species: species,
-                        datePlanted: plantedDate,
-                        height: plantHeight,
-                        location: location,
-                        waterFrequency: waterFrequency
-                    )
-
-                    do {
-                        context.insert(plant)
-                        try context.save()
-                    } catch {
-                        print("Error saving context: \(error)")
-                    }
-
-                    name = ""
-                    species = ""
-                    plantedDate = Date()
-                    height = ""
-                    location = ""
-                    waterFrequency = ""
+                    handleAdd()
                 }
             }
+        }
+    }
+
+    // Error control logic
+    private func validateFields() -> String? {
+        if name.trimmingCharacters(in: .whitespaces).isEmpty {
+            return "Name is required."
+        }
+        // Date is always set, so no need to check for nil
+        if !height.trimmingCharacters(in: .whitespaces).isEmpty && Double(height) == nil {
+            return "Height must be a number."
+        }
+        return nil
+    }
+    private func handleAdd() {
+        errorMessage = validateFields()
+        guard errorMessage == nil else { return }
+        let plantHeight: Double = height.trimmingCharacters(in: .whitespaces).isEmpty ? 0.0 : (Double(height)! * 100).rounded() / 100
+        let plant = Plant(
+            name: name,
+            species: species,
+            datePlanted: plantedDate,
+            height: plantHeight,
+            location: location,
+            waterFrequency: waterFrequency
+        )
+        do {
+            context.insert(plant)
+            try context.save()
+            name = ""
+            species = ""
+            plantedDate = Date()
+            height = ""
+            location = ""
+            waterFrequency = ""
+        } catch {
+            errorMessage = "Error saving plant: \(error.localizedDescription)"
         }
     }
 }

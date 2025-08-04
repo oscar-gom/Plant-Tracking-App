@@ -11,21 +11,50 @@ import SwiftUI
 
 struct PlantImageDetailsView: View {
     let image: PlantImage
-    
+
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var descript: String
     @State private var showDeleteConfirmation = false
-    
+    @State private var errorMessage: String? = nil
+
     private var hasChanges: Bool {
         descript != (image.descript ?? "")
     }
-    
+
     init(image: PlantImage) {
         self.image = image
         _descript = State(initialValue: image.descript ?? "")
     }
-    
+
+    // Error control logic
+    private func validateFields() -> String? {
+        if descript.trimmingCharacters(in: .whitespaces).isEmpty {
+            return "Description is required."
+        }
+        return nil
+    }
+    private func handleEdit() {
+        errorMessage = validateFields()
+        guard errorMessage == nil else { return }
+        image.descript = descript.isEmpty ? nil : descript
+        do {
+            try context.save()
+        } catch {
+            errorMessage = "Error saving image: \(error.localizedDescription)"
+        }
+    }
+    private func handleDelete() {
+        errorMessage = nil
+        context.delete(image)
+        do {
+            try context.save()
+            dismiss()
+        } catch {
+            errorMessage = "Error deleting image: \(error.localizedDescription)"
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -47,6 +76,11 @@ struct PlantImageDetailsView: View {
                     .truncationMode(.tail)
                     .foregroundColor(.primary)
                     .padding(.horizontal)
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
                 Spacer(minLength: 24)
                 Button(action: {
                     showDeleteConfirmation = true
@@ -60,13 +94,7 @@ struct PlantImageDetailsView: View {
                     isPresented: $showDeleteConfirmation
                 ) {
                     Button("Delete", role: .destructive) {
-                        context.delete(image)
-                        do {
-                            try context.save()
-                            dismiss()
-                        } catch {
-                            print("error deleting image: \(error)")
-                        }
+                        handleDelete()
                     }
                     Button("Cancel", role: .cancel) {}
                 }
@@ -76,12 +104,7 @@ struct PlantImageDetailsView: View {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button("Edit", systemImage: "pencil.circle") {
-                        image.descript = descript.isEmpty ? nil : descript
-                        do {
-                            try context.save()
-                        } catch {
-                            print("error saving image: \(error)")
-                        }
+                        handleEdit()
                     }
                     .disabled(!hasChanges)
                 }

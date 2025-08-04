@@ -16,6 +16,7 @@ struct PlantNotesDetailsView: View {
     @State private var text: String
     @State private var date: Date
     @State private var showDeleteConfirmation = false
+    @State private var errorMessage: String? = nil
     
     private var hasChanges: Bool {
         text != note.text || date != note.date
@@ -28,19 +29,22 @@ struct PlantNotesDetailsView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                DatePicker("Date", selection: $date, displayedComponents: .date)
+        Form {
+            Section {
+                TextField("Note text", text: $text)
+                    .padding(.vertical, 8)
+                Text(date, style: .date)
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .padding(.horizontal)
-                TextField("Note", text: $text)
-                    .font(.body)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .foregroundColor(.primary)
-                    .padding(.horizontal)
-                Spacer(minLength: 24)
+                    .padding(.bottom, 4)
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.vertical, 4)
+                }
+            }
+            Section {
                 Button(action: {
                     showDeleteConfirmation = true
                 }) {
@@ -53,33 +57,51 @@ struct PlantNotesDetailsView: View {
                     isPresented: $showDeleteConfirmation
                 ) {
                     Button("Delete", role: .destructive) {
-                        context.delete(note)
-                        do {
-                            try context.save()
-                            dismiss()
-                        } catch {
-                            print("error deleting note: \(error)")
-                        }
+                        handleDelete()
                     }
                     Button("Cancel", role: .cancel) {}
                 }
             }
-            .padding()
-            .navigationTitle("Note Details")
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Edit", systemImage: "pencil.circle") {
-                        note.text = text
-                        note.date = date
-                        do {
-                            try context.save()
-                        } catch {
-                            print("error saving note: \(error)")
-                        }
-                    }
-                    .disabled(!hasChanges)
+        }
+        .navigationTitle("Note Details")
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button(action: { handleEdit() }) {
+                    Label("Edit", systemImage: "pencil.circle")
                 }
+                .disabled(!hasChanges)
             }
+        }
+    }
+    
+    // Error control logic
+    private func validateFields() -> String? {
+        if text.trimmingCharacters(in: .whitespaces).isEmpty {
+            return "Note text is required."
+        }
+        return nil
+    }
+    
+    private func handleEdit() {
+        errorMessage = validateFields()
+        guard errorMessage == nil else { return }
+        note.text = text
+        note.date = date
+        do {
+            try context.save()
+        } catch {
+            errorMessage = "Error saving note: \(error.localizedDescription)"
+        }
+    }
+    
+    private func handleDelete() {
+        errorMessage = nil
+        context.delete(note)
+        do {
+            try context.save()
+            dismiss()
+        } catch {
+            errorMessage = "Error deleting note: \(error.localizedDescription)"
         }
     }
 }
