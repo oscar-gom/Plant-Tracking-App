@@ -27,27 +27,37 @@ struct PlantImagesView: View {
 
     var body: some View {
         VStack {
-            List(filteredImages) { image in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(image.date, style: .date)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    if let uiImage = UIImage(data: image.image) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxHeight: 200)
-                            .cornerRadius(8)
+            List {
+                ForEach(filteredImages) { image in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(image.date, style: .date)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                        
+                        if let uiImage = UIImage(data: image.image) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxHeight: 200)
+                                .cornerRadius(8)
+                                .padding(.horizontal)
+                        }
+                        
+                        Text(image.descript ?? "")
+                            .font(.body)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .foregroundColor(.primary)
+                            .padding(.horizontal)
                     }
-                    
-                    Text(image.descript ?? "")
-                        .font(.body)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .foregroundColor(.primary)
+                    .padding()
                 }
-                .padding(.vertical, 8)
+                .onDelete { indexes in
+                    for index in indexes {
+                        context.delete(filteredImages[index])
+                    }
+                }
             }
         }
         .navigationTitle("\(plant.name)'s Images")
