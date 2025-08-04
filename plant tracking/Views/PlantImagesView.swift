@@ -8,7 +8,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-struct ImagesView: View {
+struct PlantImagesView: View {
     let plant: Plant
 
     @Environment(\.modelContext) private var context
@@ -69,5 +69,5 @@ struct ImagesView: View {
 }
 
 #Preview {
-    ImagesView(plant: Plant(name: "Prueba", datePlanted: Date()))
+    PlantImagesView(plant: Plant(name: "Prueba", datePlanted: Date()))
 }

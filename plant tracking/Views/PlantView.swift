@@ -76,7 +76,7 @@ struct PlantView: View {
                 }
             }
             Section {
-                NavigationLink(destination: ImagesView(plant: plant)) {
+                NavigationLink(destination: PlantImagesView(plant: plant)) {
                     HStack {
                         Text("Images")
                         Spacer()
