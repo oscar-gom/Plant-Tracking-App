@@ -98,8 +98,8 @@ struct HomeView: View {
                                         .presentationDetents([.height(600)])
                                 }
                             }
-                            Button("Settings", systemImage: "gearshape.fill") {
-                                // TODO: Show settings
+                            NavigationLink(destination: SettingsView()) {
+                                Image(systemName: "gearshape.fill")
                             }
                         }
                     }
