@@ -15,9 +15,14 @@ struct HomeView: View {
     @State private var showAddPlantSheet = false
     
     @Query private var plants: [Plant]
+    @Query(sort: \PlantImage.date, order: .reverse) private var allPlantImages: [PlantImage]
     
     private var adaptiveColumns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 16), count: min(3, max(1, Int(UIScreen.main.bounds.width / 140))))
+    }
+    
+    private func getLatestImage(for plant: Plant) -> PlantImage? {
+        return allPlantImages.first { $0.plant == plant }
     }
     
     var body: some View {
@@ -32,10 +37,22 @@ struct HomeView: View {
                                         .fill(Color.green.opacity(0.3))
                                         .frame(height: 120)
                                         .overlay(
-                                            Image(systemName: "leaf.fill")
-                                                .font(.title)
-                                                .foregroundColor(.green)
+                                            Group {
+                                                if let latestImage = getLatestImage(for: plant),
+                                                   let uiImage = UIImage(data: latestImage.image) {
+                                                    Image(uiImage: uiImage)
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                        .clipped()
+                                                } else {
+                                                    Image(systemName: "leaf.fill")
+                                                        .font(.title)
+                                                        .foregroundColor(.green)
+                                                }
+                                            }
                                         )
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(plant.name)
@@ -55,7 +72,9 @@ struct HomeView: View {
                                             .lineLimit(1)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 4)
                                 }
+                                .frame(maxWidth: .infinity)
                                 .padding(12)
                                 .background(Color(.systemGray6))
                                 .cornerRadius(16)
