@@ -16,10 +16,12 @@ struct PlantImageDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var descript: String
     @State private var showDeleteConfirmation = false
+    @State private var showingImagePicker = false
+    @State private var selectedImage: UIImage?
     @State private var errorMessage: String? = nil
 
     private var hasChanges: Bool {
-        descript != (image.descript ?? "")
+        descript != (image.descript ?? "") || selectedImage != nil
     }
 
     init(image: PlantImage) {
@@ -34,16 +36,26 @@ struct PlantImageDetailsView: View {
         }
         return nil
     }
+    
     private func handleEdit() {
         errorMessage = validateFields()
         guard errorMessage == nil else { return }
+        
+        // Update image if a new one was selected
+        if let selectedImage = selectedImage,
+           let imageData = selectedImage.jpegData(compressionQuality: 0.8) {
+            image.image = imageData
+        }
+        
         image.descript = descript.isEmpty ? nil : descript
         do {
             try context.save()
+            self.selectedImage = nil
         } catch {
             errorMessage = "Error saving image: \(error.localizedDescription)"
         }
     }
+    
     private func handleDelete() {
         errorMessage = nil
         context.delete(image)
@@ -62,26 +74,53 @@ struct PlantImageDetailsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
-                if let uiImage = UIImage(data: image.image) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxHeight: 300)
-                        .cornerRadius(8)
-                        .padding(.horizontal)
+                
+                // Display gallery image or selected image
+                Button(action: {
+                    showingImagePicker = true
+                }) {
+                    if let selectedImage = selectedImage {
+                        Image(uiImage: selectedImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxHeight: 300)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.blue, lineWidth: 2)
+                            )
+                    } else if let uiImage = UIImage(data: image.image) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxHeight: 300)
+                            .cornerRadius(8)
+                    }
                 }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal)
+                
+                Text("Tap image to change")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                
                 TextField("Description", text: $descript)
                     .font(.body)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .foregroundColor(.primary)
                     .padding(.horizontal)
+                
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
+                        .padding(.horizontal)
                 }
+                
                 Spacer(minLength: 24)
+                
                 Button(action: {
                     showDeleteConfirmation = true
                 }) {
@@ -100,15 +139,18 @@ struct PlantImageDetailsView: View {
                 }
             }
             .padding()
-            .navigationTitle("Image Details")
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Edit", systemImage: "pencil.circle") {
-                        handleEdit()
-                    }
-                    .disabled(!hasChanges)
+        }
+        .navigationTitle("Image Details")
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button("Edit", systemImage: "pencil.circle") {
+                    handleEdit()
                 }
+                .disabled(!hasChanges)
             }
+        }
+        .sheet(isPresented: $showingImagePicker) {
+            ImagePicker(selectedImage: $selectedImage)
         }
     }
 }
